@@ -60,4 +60,3 @@ The web app is seeded with a significant amount of sample data to allow you to e
 
 To gain access to the administrative features use these credentials (username: @johndoe password: Password123). All the other users have the same password as well (Password123).
 
-For security reasons the Open AI API key used was not left in the GitHub code so the AI features of our website will not work if you run it on your local machine. If you wish to test this feature please head directly to the deployed version of the app at https://kaleidoscopejournal.pythonanywhere.com/ .
