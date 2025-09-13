@@ -1,0 +1,22 @@
+{% extends 'base_content.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="landing-container" style="margin-bottom: 140px">
+  <div class="card menu-card">
+    <div class="card-body" id="menu-body">
+      <h1 class="card-title" id="menu-title">Menu</h1>
+      <a class="btn btn-secondary" id="menu-button" href={% url 'dashboard' %}><h1>My journal</h1></a>
+    <a class="btn btn-secondary" id="menu-button" href={% url 'templates' %}><h1>Templates</h1></a>
+    <a class="btn btn-secondary" id="menu-button" href={% url 'achievements' %}><h1>Progress</h1></a>
+    <a class="btn btn-secondary" id="menu-button" href={% url 'archives' %}><h1>Archives</h1></a>
+    </div>
+    
+  </div>
+  <img src="../../static/assets/new_logo.png">  
+  
+  
+</div>
+
+{% endblock %}

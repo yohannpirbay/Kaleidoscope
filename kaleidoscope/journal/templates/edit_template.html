@@ -1,0 +1,42 @@
+{% extends 'base_content.html' %}
+{% block content %}
+{% load custom_filters %}
+
+<div class="row">
+    <div class="toolbar">
+        <h1 style="color: white;">Templates</h1>
+    </div>    
+</div >
+<div style="margin-bottom: 357px;">
+    <h2 id="template-text"> Edit your template here: </h2>
+    <div class="right-section" style="flex: 1; margin-left: 20px;">
+        <form id="template-form" method="POST" action="{% url 'update_template' %}" style="margin-top: 20px" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <input type="hidden" name="template_id" id="template-id" value="{{ template_id}}">
+            <div class="template-editor" style="flex: 1; margin-left: 20px;">
+                <textarea name="template_title" id="template-editor-titilearea" placeholder="Template Title" style="width: 100%; margin-bottom: 10px;" required>{{ template_title }}</textarea>
+                <textarea name="template_text" id="template-editor-textarea" placeholder="Template Text" style="width: 100%; height: 300px;" required>{{ template_text }}</textarea>
+                <button type="submit" id ="save-changes-btn" class="btn btn-success">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        var title = document.getElementById('template-editor-titilearea').value.trim();
+        var text = document.getElementById('template-editor-textarea').value.trim();
+    
+        if (!title || !text) {
+            alert('Title and text cannot be empty.');
+            return false; 
+        }
+    
+        return true; 
+    }
+</script>
+
+{% endblock %}
+
+
+    

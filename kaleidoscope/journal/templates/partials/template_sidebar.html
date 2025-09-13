@@ -1,0 +1,18 @@
+
+
+<div class="sidebar">
+    <div class="new-entry-from-template">
+        <form action="{% url 'create_entry_from_template' %}" method="post">
+            {% csrf_token %}
+            <select name="template_id" required>
+                <option value="">Choose a template</option>
+                {% for entry in templates %}
+                    <option value="{{ entry.id }}">{{ entry.title }}</option>
+                {% endfor %}
+            </select>
+            <div class="create-template">
+                <button type="submit">Create entry from template</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        {% include 'partials/charts.html' %}
+        <canvas id="blank"></canvas>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        QUnit.module('chartTest');
+
+        QUnit.test('Line chart is created', function (assert) {
+            const lineChartCanvas = document.getElementById('linechart');
+            assert.ok(lineChartCanvas, "Line chart canvas exists");
+            assert.notEqual(lineChartCanvas.toDataURL(), document.getElementById('blank').toDataURL(), "Line chart should be created");
+        });
+
+        QUnit.test('Mood chart is created', function (assert) {
+            const moodChartCanvas = document.getElementById('moodchart');
+            assert.ok(moodChartCanvas, "Mood chart should exist");
+            assert.notEqual(moodChartCanvas.toDataURL(), document.getElementById('blank').toDataURL(), "Line chart should be created");
+        });
+    </script>
+</body>

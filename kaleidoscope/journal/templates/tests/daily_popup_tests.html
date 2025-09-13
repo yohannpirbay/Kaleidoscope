@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        {% include 'partials/popup.html' %}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <!-- <script src="{% static 'js/popup.js' %}"></script> -->
+    <script>
+        async function showNotification(type, content) {
+            const delay = ms => new Promise(res => setTimeout(res, ms));
+            const popup = document.getElementById('popup');
+            const header = document.getElementById('pop-up-header');
+            const body = document.getElementById('pop-up-body');
+
+            if (type == "daily") {
+                header.innerHTML = "Daily Reminder";
+                body.innerHTML = "Don't forget to fill out your daily entry!";
+            } else if (type == "achievement") {
+                header.innerHTML = "Achievement Unlocked! -- " + content.achievementName;
+                body.innerHTML = content.achievementDescription;
+            }
+            await delay(3000);
+            popup.style.marginBottom = "20px";
+            popup.style.opacity = "1";
+            await delay(5000);
+            popup.style.marginBottom = "-200px";
+            popup.style.opacity = "0";
+
+            header.innerHTML = "Easiest Header on the Planet";
+            body.innerHTML = "Do your daily journal!";
+        }
+
+        QUnit.module('popupTest', {
+            before: function () {
+                this.popup = document.getElementById('popup');
+                this.popUpHeader = document.getElementById('pop-up-header');
+                this.popUpBody = document.getElementById('pop-up-body');
+            }
+        });
+        QUnit.test('Popup is initially invisible', function (assert) {
+            assert.equal(window.getComputedStyle(this.popup).marginBottom, "-200px", "Popup should be down");
+            assert.equal(window.getComputedStyle(this.popup).opacity, "0", "Popup should be invisible");
+        });
+
+        QUnit.test('Show daily notification', function (assert) {
+            showNotification("daily");
+            assert.equal(document.getElementById('pop-up-header').innerHTML, "Daily Reminder", "Header should be 'Daily Reminder'");
+            assert.equal(document.getElementById('pop-up-body').innerHTML, "Don't forget to fill out your daily entry!", "Body should be 'Don't forget to fill out your daily entry!'");
+        });
+    </script>
+</body>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block body %}
+
+  <div class="container" id="home-container" style="margin-bottom: 300px"> 
+    <div class="card cover-card" style="margin-top: -50px">
+      <h1 class="cover-heading">Kaleidoscope</h1>
+      <img src="../static/assets/new_logo.png" width="280" height="280"></img>
+      <p class="cover-text">A journaling web app</p>
+      <p>
+        <a href='{% url 'log_in' %}' class="btn btn-lg btn-secondary">
+          Log in
+        </a>
+      </p>
+      <p>
+        <a href='{% url 'sign_up' %}' class="btn btn-lg btn-secondary">
+          Sign up
+        </a>
+      </p>        
+    </div> 
+  </div>
+{% endblock %}

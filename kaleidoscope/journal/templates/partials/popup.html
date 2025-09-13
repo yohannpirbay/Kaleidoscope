@@ -1,0 +1,34 @@
+<style>
+    .pop-up{
+        padding: 10px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 7;
+        border: 1px solid black;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255);
+        opacity: 0;
+        margin-right: 20px;
+        margin-bottom: -200px;
+        transition: 200ms;
+    }
+    .pop-up-header{
+        font-size: 20px;
+        font-weight: bold;
+        border-bottom: 1px solid black;
+    }
+</style>
+
+<div class="pop-up" id="popup">
+    <div class="pop-up-header" id="pop-up-header">
+        Easiest Header on the Planet
+    </div>
+    <div class="pop-up-body" id="pop-up-body">
+        Do your daily journal!
+    </div>
+</div>
+
+{% if isDaily %}
+    <script src="/static/js/popup.js"></script>
+{% endif %}

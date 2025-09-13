@@ -1,0 +1,15 @@
+[
+    {
+      "model": "journal.entry",
+      "pk": 1,
+      "fields": {
+        "user": 1,
+        "title":"Default Title",
+        "text": "This is a default entry text.",
+        "mood":0,
+        "date_created": "2024-02-13T08:00:00Z",
+        "bookmarked":0
+      }
+    }
+  ]
+  

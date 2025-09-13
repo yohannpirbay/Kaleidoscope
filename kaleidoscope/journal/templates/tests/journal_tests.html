@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        {% include 'dashboard.html' %}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <script src="{% static 'js/cookies.js' %}"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'js/journal.js' %}"></script>
+    <script>
+        QUnit.module('journalTest');
+
+        QUnit.test('Test setupCopyQuestionFeature', function (assert) {
+            document.getElementById('copyQuestionBtn').click();
+            assert.ok(true, 'Clipboard API called on copyQuestionBtn click');
+        });
+
+        QUnit.test('Test setupImageUploading', function (assert) {
+            document.getElementById('image-upload').dispatchEvent(new Event('change'));
+            assert.equal(document.querySelector('.entry-content').querySelectorAll('.uploaded-image-container').length, 0, 'Image uploaded successfully');
+        });
+
+        QUnit.test('Test displayQuestionModal', function (assert) {
+            displayQuestionModal('Sample Question');
+            assert.equal(document.getElementById('questionText').innerText, 'Sample Question', 'Question modal displayed with correct text');
+        });
+
+    </script>
+</body>

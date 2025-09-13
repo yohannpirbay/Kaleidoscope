@@ -1,0 +1,43 @@
+{% extends 'base_content.html' %}
+{% block content %}
+{% load custom_filters %}
+
+
+
+
+<div style="display: flex; justify-content: space-between;">
+    <div class="left-section" style="display: flex; flex-direction: column; flex: 1;">
+        <div style="margin-bottom: 303px;">
+        <div class="row">
+            <div class="toolbar">
+                <h1 style="color: white;">Templates</h1>
+            </div>    
+        </div>
+        <div class ="templates-container">
+            <a class="btn btn-primary" id="template-button" href={% url 'create_a_new_template' %}><h1>Create a new template</h1></a>
+        </div>
+        <div class="templates-list" style="overflow-y: auto; max-height: 650px;">
+            {% for entry in entries %}
+                <div class="template-item" style="margin-bottom: 20px;">
+                    <div class="template-preview">
+                        <p>{{ entry.title|strip_tags|linebreaks}}</p>
+                        <p>{{ entry.text|strip_tags|linebreaks}}</p>
+                    </div>
+                    <div class="template-actions" style="display: flex; gap: 10px; align-items: center;">
+                    <a href="{% url 'edit_template' entry.id%}" class="btn btn-primary">Edit</a>
+                    <form action="{% url 'delete_template' entry.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+                </div>
+            {% empty %}
+                <p>No templates found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+    

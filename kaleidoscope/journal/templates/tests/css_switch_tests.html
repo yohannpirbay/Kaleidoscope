@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <table class="table achievements">
+            <thead>
+                <tr>
+                    <th>Achievement</th>
+                    <th>Description</th>
+                    <th>Progress</th>
+                    <th>Rewards</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for achievement in achievements %}
+                <tr>
+                    <td>{{ achievement.name }}</td>
+                    <td>{{ achievement.description }}</td>
+                    <td>
+                        {% if achievement.is_achieved %}
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%"
+                                aria-valuenow="{{ achievement.completed }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% else %}
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped" role="progressbar"
+                                style="width: {{ achievement.percentage_completed }}%"
+                                aria-valuenow="{{ achievement.completed }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+                        {% if achievement.is_achieved %}
+                        <div class="form-check form-switch">
+                            <input class="form-check-input reward-checkbox" type="checkbox" id="{{achievement.reward}}">
+                            <label class="form-check-label" for="{{achievement.reward}}">{{achievement.reward}}</label>
+                        </div>
+                        {% else %}
+                        <div class="form-check form-switch" id="blah">
+                            <input class="form-check-input" type="checkbox" id="blah" disabled>
+                            <label class="form-check-label" for="togglecss">Not Yet</label>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <canvas id="blank"></canvas>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <!-- <script src="{% static 'js/css_switch.js' %}"></script> -->
+    <script>
+        let theme = localStorage.getItem("theme");
+        document.body.classList.add(theme)
+        const checkboxes = document.querySelectorAll('.reward-checkbox');
+
+        checkboxes.forEach(checkbox => checkbox.addEventListener('changed', function () { console.log("hihiahahah") }));
+        //checkboxes.forEach(checkbox => checkbox.dispatchEvent(new Event('changed')));
+
+        checkboxes.forEach(checkbox => {
+            theme = localStorage.getItem("theme");
+            if (checkbox.id == theme) {
+                checkbox.setAttribute('checked', 'checked');
+            }
+            checkbox.addEventListener('change', function () {
+                console.log("elistner added -- ", checkbox)
+                theme = localStorage.getItem("theme");
+                if (this.checked) {
+                    let col = checkbox.getAttribute("id")
+                    console.log("col -- ", col)
+                    switch (col) {
+                        case "dark":
+                            document.body.classList.add(col);
+                            document.body.classList.remove("light");
+                            document.body.classList.remove("red");
+                            localStorage.setItem("theme", col);
+                            break;
+                        case "light":
+                            document.body.classList.remove("dark");
+                            document.body.classList.add("light");
+                            document.body.classList.remove("red");
+                            localStorage.setItem("theme", col);
+                            break;
+                        case "red":
+                            document.body.classList.remove("dark");
+                            document.body.classList.remove("light");
+                            document.body.classList.add("red");
+                            localStorage.setItem("theme", "red");
+                            break;
+                    }
+
+                    // Uncheck all other checkboxes
+                    checkboxes.forEach(function (cb) {
+                        if (cb !== checkbox) {
+                            cb.checked = false;
+                        }
+                    });
+                } else {
+                    document.body.classList.remove("dark");
+                    document.body.classList.remove("light");
+                    document.body.classList.remove("red");
+                    document.body.classList.add("root");
+                    localStorage.setItem("theme", "root");
+                }
+            });
+
+            checkbox.addEventListener('click', function () {
+                console.log("clicked");
+            })
+        });
+
+        QUnit.module('cssTest');
+
+        QUnit.test("Checkboxes exist", function (assert) {
+            const checkboxes = document.querySelectorAll('.reward-checkbox');
+            assert.ok(checkboxes.length > 0, "Checkboxes exist");
+        });
+
+        QUnit.test("Document has theme", function (assert) {
+            const theme = localStorage.getItem('theme');
+            assert.ok(document.body.classList.contains(theme), "Document has theme");
+        });
+
+        QUnit.test("Toggle theme", function (assert) {
+            checkboxes.forEach(checkbox => {
+                theme = localStorage.getItem("theme");
+                if (checkbox.id == theme) {
+                    assert.equal(checkbox.getAttribute('checked'), 'checked', 'Checkbox is checked');
+                }
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+                let col = checkbox.getAttribute("id")
+                console.log(col)
+                switch (col) {
+                    case "dark":
+                        assert.ok(document.body.classList.contains(col), "Theme is dark");
+                        assert.notOk(document.body.classList.contains("light"), "Theme aint light");
+                        assert.notOk(document.body.classList.contains("red"), "Theme aint red");
+                        break;
+                    case "light":
+                        assert.notOk(document.body.classList.contains("dark"), "Theme aint dark");
+                        assert.ok(document.body.classList.contains("light"), "Theme is light");
+                        assert.notOk(document.body.classList.contains("red"), "Theme aint red");
+                        break;
+                    case "red":
+                        assert.notOk(document.body.classList.contains("dark"), "Theme aint dark");
+                        assert.notOk(document.body.classList.contains("light"), "Theme aint light");
+                        assert.ok(document.body.classList.contains("red"), "Theme is red");
+                        break;
+                }
+                assert.equal(localStorage.getItem("theme"), col);
+                
+                checkboxes.forEach(cb => {
+                    if(cb !== checkbox){
+                        assert.equal(cb.checked, false);
+                    }
+                });
+            });
+        });
+
+    </script>
+</body>

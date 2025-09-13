@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Test Suite</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+  <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture">
+    {% include 'partials/info_button.html' %}
+  </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+  <script src="{% static 'js/info_button.js' %}"></script>
+  <script>
+    QUnit.module('helpButtonTest', {
+      before: function () {
+        this.infoBox = document.getElementById('info-box');
+        this.overlay = document.getElementById('overlay');
+        this.infoButton = document.getElementById('info-button');
+        this.closeButton = document.getElementById('close-button');
+        const infoBox = this.infoBox;
+        const overlay = this.overlay;
+
+        setupInfoBoxFeature();
+      }
+    });
+
+    QUnit.test('Info box is hidden by default', function (assert) {
+      const transformValue = window.getComputedStyle(this.infoBox).transform;
+      const match = transformValue.match(/matrix\(([^)]+)\)/);
+      if (match) {
+        const scale = match[1].split(',')[0];
+        assert.equal(scale, 0, 'The info box is hidden');
+      }
+    });
+
+    QUnit.test('Clicking the info button shows the info box', function (assert) {
+      this.infoButton.click();
+
+      assert.ok(this.infoBox.classList.contains('active'), 'The info box is visible');
+      assert.ok(this.overlay.classList.contains('active'), 'The overlay is visible');
+    });
+
+    QUnit.test('Clicking the close button hides the info box', function (assert) {
+      this.infoButton.click();
+      assert.ok(this.infoBox.classList.contains('active'), 'The info box is visible');
+      assert.ok(this.overlay.classList.contains('active'), 'The overlay is visible');
+
+      this.closeButton.click();
+
+      assert.notOk(this.infoBox.classList.contains('active'), 'The info box is hidden');
+      assert.notOk(this.overlay.classList.contains('active'), 'The overlay is hidden');
+    });
+
+  </script>
+</body>

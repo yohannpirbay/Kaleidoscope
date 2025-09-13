@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "require": "^0.4.4"
+  }
+}

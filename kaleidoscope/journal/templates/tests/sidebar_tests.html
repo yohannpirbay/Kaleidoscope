@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.1.css">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        {% include 'partials/journal_sidebar.html' %}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.20.1.js"></script>
+    <script src="{% static 'js/cookies.js' %}"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'js/journal.js' %}"></script>
+    <script>
+        QUnit.module('sidebarTest', {
+            before: function () {
+                setupJournalSidebarFeatures();
+            }
+        });
+
+        QUnit.test('Create entry is valid', function (assert) {
+            createNewEntryTest();
+            const formTest = document.getElementById('create-entry-form-test');
+            const csrfInputTest = document.getElementById('csrf-input-test');
+
+            assert.equal(formTest.getAttribute('method'), 'post', 'Form method is post');
+            assert.equal(formTest.getAttribute('action'), '/create_entry/', 'Form action is /create_entry/');
+            assert.equal(csrfInputTest.getAttribute('type'), 'hidden', 'CSRF input type is hidden');
+            assert.equal(csrfInputTest.getAttribute('name'), 'csrfmiddlewaretoken', 'CSRF input name is csrfmiddlewaretoken');
+            assert.equal(csrfInputTest.getAttribute('value'), getCookie('csrftoken'), 'CSRF input value is the cookie');
+        });
+
+        QUnit.test('Update sidebar preview', function (assert) {
+            updateSideBar("NewTitle", "", 3);
+            const sidebarEntry = document.querySelector(`.entry[data-entry-id="${3}"]`);
+            if (sidebarEntry) {
+                const entryDate = sidebarEntry.querySelector('.entry-date').outerHTML;
+                const entryPreview = sidebarEntry.querySelector('.entry-preview').innerHTML;
+
+                assert.equal(entryPreview, `NewTitle ${entryDate}`, "Entry was changed");
+            }
+        });
+
+        QUnit.test('Filter bookmarked entries', function (assert) {
+
+            filterBookmarkedEntries();
+
+            const bookmarkedButton = document.querySelector('.bookmarked-entries button');
+            const showBookmarks = bookmarkedButton.getAttribute('data-show-bookmarks') === 'true';
+
+            if (!showBookmarks) {
+                // Show only bookmarked entries
+                [...document.querySelectorAll('.entry')].forEach(entry => {
+                    const isBookmarked = entry.querySelector('.bookmark-entry-btn i').classList.contains('bi-bookmark-fill'); // Adjust based on your actual bookmark icon class
+                    if (!isBookmarked) {
+                        assert.equal(entry.style.display, 'none', 'Entry should be hidden');
+                    } else {
+                        assert.equal(entry.style.display, '', 'Entry should be visible');
+                    }
+                });
+            } else {
+                // Show all entries
+                [...document.querySelectorAll('.entry')].forEach(entry => {
+                    entry.style.display = '';
+                    assert.equal(entry.style.display, '', 'Entry should be visible');
+                });
+            }
+        });
+
+        QUnit.test("Toggle bookmark", async function (assert) {
+
+            toggleBookmark(3);
+
+            const csrftoken = getCookie('csrftoken');
+            const bookmarkBtn = document.querySelector(`.bookmark-entry-btn[data-entry-id="${3}"] i`);
+
+            const isBookmarked = bookmarkBtn.classList.contains('bi-bookmark-fill');
+            bookmarkBtn.className = isBookmarked ? 'bi bi-bookmark' : 'bi bi-bookmark-fill';
+            
+            await fetch(`/toggle_bookmark/${3}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ entry_id: 3 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Correctly updates the icon based on actual server response if needed
+                assert.equal(data.status, 'success', 'Bookmark status updated')
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revert the icon change if there's an error
+                bookmarkBtn.className = isBookmarked ? 'bi bi-bookmark-fill' : 'bi bi-bookmark';
+            });
+        });
+
+        QUnit.test("Delete Entry", function (assert) {
+            
+            deleteEntryTest(3);
+            const entry = document.querySelector(`.entry[data-entry-id="${3}"]`);
+
+            assert.notOk(entry, 'Entry was deleted');
+        });
+    </script>
+</body>

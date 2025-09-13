@@ -1,0 +1,41 @@
+{% extends 'base_content.html' %}
+{% block content %}
+{% load custom_filters %}
+
+<div class="row">
+    <div class="toolbar">
+        <h1 style="color: white;">Templates</h1>
+    </div>    
+</div>
+<div style="margin-bottom: 398px;">
+    <h2 id="template-text"> Create a new template here: </h2>
+    <div class="right-section" style="flex: 1; margin-left: 20px;">
+        <form id="create-template-form" method="POST" action="{% url 'create_template' %} " onsubmit="return validateForm()">
+            {% csrf_token %}
+            <div class="template-editor" style="flex: 1; margin-left: 20px;">
+                <input type="text" name="template_title" id="create-template-title-input" placeholder="Template Title" style="width: 100%; margin-bottom: 10px;" required>
+                <textarea name="template_text" id="create-template-textarea" placeholder="Template Text" style="width: 100%; height: 300px;" required></textarea>
+                <button type="submit" class="btn btn-success">Create Template</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+        function validateForm() {
+            var title = document.getElementById('create-template-title-input').value.trim();
+            var text = document.getElementById('create-template-textarea').value.trim();
+        
+            if (!title || !text) {
+                alert('Title and text cannot be empty.');
+                return false; 
+            }
+        
+            return true; 
+        }
+</script>
+
+{% endblock %}
+
+
+    

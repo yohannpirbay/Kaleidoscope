@@ -1,0 +1,70 @@
+{% extends 'base_content.html' %}
+{% block content %}
+
+<style>
+    html, body {
+        overflow-y: auto; /* Re-enable vertical scrolling for this page */
+    }
+</style>
+
+<div class="archives-container">
+    <div class="row">
+        <div class="toolbar">
+            <h1 style="color: white;">Archives</h1>
+        </div>
+    </div>
+    {% for month,entries in months.items %}
+    <div class="row">
+        <div class="card month">
+            <div class="card-body month">
+                <div class="card-title"><h1 style="color: white;">{{ month }}</h1></div>
+                <button id="downloadButton" class="btn btn-primary" onclick="multiplePDFDownloads()">Download Selected Entries</button>
+            </div>
+        </div>
+        <div class="container month-entries"> 
+            {% for entry in entries %}
+            <div class="card entry">
+                <div class="card-body entry">
+                    <div class="card-title">
+                            <label class="checkbox-container" archive_entry_id="{{entry.id}}">
+                                {{entry.title}}
+                                <input type="checkbox" class="entry-checkbox" value="{{ entry.id }}">
+                                <span class="checkmark"></span> 
+                            </label>
+                            <label>
+                                {{entry.date_created}}
+                            </label>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            {% endfor%}  
+        </div>
+    </div>
+    {% endfor %}
+    
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script>
+    
+    document.getElementById('downloadButton').addEventListener('click', function() {
+    var selectedEntries = document.querySelectorAll('.entry-checkbox:checked');
+    if (selectedEntries.length === 0) {
+        alert('Please select at least one entry.');
+        return;
+    }
+
+    //var pdf = new jsPDF();
+    selectedEntries.forEach(function(checkbox) {
+        
+        // var entryText = checkbox.parentElement.textContent.trim();
+        // pdf.text(entryText, 10, pdf.internal.getCurrentPageInfo().pageNumber * 10);
+        // pdf.addPage();
+    });
+    // pdf.save('selected_entries.pdf');
+});
+
+</script>
+{% endblock %}

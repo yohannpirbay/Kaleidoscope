@@ -1,0 +1,86 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+
+<div class="dashboard-container">
+  <div class="row">
+    <div class="toolbar">
+      <h3 style="color: #F7F4F3;">My journal</h3>
+      <button id="save-entry-btn" class="btn btn-primary" title="Save" onclick="saveEntryContent()"> <h3>&#x1F4BE;</h3></button>
+      <button id="toolbar-btn" class="btn btn-primary" title="Download" onclick= "downloadEntry()"><h3>&#x2B07;</h3>
+      
+      </h1></button>
+
+      <input type="file" id="image-upload" accept="image/*" style="display: none;">
+      <button id="toolbar-btn" class="btn btn-primary" title="Upload Image" onclick="document.getElementById('image-upload').click();"><h3>&#x1F5BC;</h3></button>
+
+      
+      <a class = "btn btn-primary"  id="toolbar-btn"href={% url 'landing' %}><h3>&#x1F3E1;</h3></a>
+      <div class="container ai_journal">
+        <div class="input-group">
+          <input type="text" id="userInput" class="form-control custom-input" placeholder="What did you do today?" aria-label="User activity">
+          <button id="generateQuestionBtn" class="btn btn-primary" type="button" onclick="generateInspiringQuestion()"> Generate Inspiration</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2 custom-col-sidebar">
+      {% include 'partials/journal_sidebar.html' %}
+    </div>
+    <div class="col-sm-8 custom-col-entry">
+      <div class="container middle-container">
+        <div class="row mood-row">
+          <div class="container mood-tracker-container" id="mood-tracker">
+            <h4><i>How are you feeling?</i></h4>
+            <div class="container mood-value">
+              <h1>&#128557;</h1>
+              <label for="mood-value" class="form-label"></label>
+              <input type="range" class="form-range" min="0" max="5" step="0.1" id="mood-value" value="1" style="padding-top:30px ;">
+              <h1>&#128516;</h1>
+            </div>
+          </div>
+        </div>
+        <div class="row entry-row">
+          <div class="entry-container d-flex flex-column">
+            <div class="card" style="width: 100%; height: 100%; background-color: #F7F4F3;">
+              <div class="card-body" style="height: 100%;">
+                <div class="entry-title" class="h1" contenteditable="true" id="entry-title-edit">
+                  <h1>Today is {{ current_date }} &#9728;</h1>
+                </div>
+                <div class="entry-content mb-auto" contenteditable="true" id="entry-edit" style="max-height: 80%;">
+                  <p>Create an entry and navigate to it to get started! &#128522;</pp>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2 custom-col-sidebar">
+      {% include 'partials/template_sidebar.html' %}
+    </div>
+  </div>
+  <div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="questionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title modal-text" id="questionModalLabel">Your Inspiring Question:</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-text" id="questionText">
+          <!-- Generated question will be inserted here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="copyQuestionBtn">Copy to Clipboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

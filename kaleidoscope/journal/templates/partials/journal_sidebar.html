@@ -1,0 +1,44 @@
+
+
+<div class="sidebar">
+    <div class="search-bar">
+        <input class="entry-search" type="text" placeholder="Search Entries"/>
+    </div>
+    <div class="bookmarked-entries">
+        <button class="sidebar-btn" data-show-bookmarks="false">
+           <h5>Bookmarked Entries</h5>
+        </button>
+    </div>
+    <div class="new-entry" >
+        <form method="post" action="{% url 'create_entry' %}">
+            {% csrf_token %}
+            <button type="submit" class="sidebar-btn" id="new-entry-btn" ><h5>Create Entry</h5></button>
+          </form>
+    </div>
+    <div class="entries">
+        <!-- A list of all the created entries -->
+        {% for entry in entries %}
+        {% if not entry.is_template %}
+            <div class="entry" data-entry-id="{{ entry.id }}">
+                <div class="entry-preview">
+                    {{ entry.title }}
+                    <div class="entry-date">
+                        {{ entry.date_created|date:"d/m/y, H:i" }}
+                    </div>
+                </div>
+
+                <div class="entry-buttons">
+                    <button class="btn btn-sm bookmark-entry-btn" data-entry-id="{{ entry.id }}" data-bookmarked="{{ entry.bookmarked }}">
+                        <i class="bi bi-bookmark{{ entry.bookmarked|yesno:",-fill" }}"></i>
+                    </button>
+
+                    <button class="btn btn-sm delete-entry-btn" data-entry-id="{{ entry.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        {% endif%}
+        {% endfor %}
+    </div>
+        {% include "partials/info_button.html" %}
+</div>

@@ -1,0 +1,141 @@
+{% extends 'base_content.html' %}
+{% block content %}
+
+<style>
+    html, body {
+        overflow-y: auto;
+    }
+</style>
+
+<div class="achievements-container">
+    <div class="row">
+      <div class="toolbar">
+        <h1 style="color: white;">Progress</h1>
+      </div>
+    </div>
+    <div class="row">
+        <div class="container achievements">
+            <div class="container reminder-mood">
+                <div class="container achievements-item">
+                    <h1>Reminders</h1>
+                    <button class="btn btn-primary" id="create-reminder-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCreateReminder">Create Reminder</button>
+                    <button class="btn btn-primary" id="view-reminder-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasViewReminder">View Reminders</button>
+                    </div>
+                <div class="container achievements-item">
+                    <h1>Mood Table</h1>
+                    <div class="container mood-badges">
+                        {% for mood in moods %}
+                            {% if mood > 3.75 %}
+                                <span class="badge" style="background-color: rgb(46, 143, 41);"> </span>
+                            {% elif mood > 2.5 %}
+                                <span class="badge" style="background-color: rgb(236, 236, 12);"> </span>
+                            {% elif mood > 1.25 %}
+                                <span class="badge" style="background-color: rgb(236, 183, 6);"> </span>
+                            {% else %}
+                                <span class="badge" style="background-color: rgb(255, 94, 0);"> </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container achievements-item">
+                <h1>Achievements</h1>
+                <div class="container achievements-table">
+                    <table class="table achievements">
+                        <thead>
+                            <tr>
+                                <th>Achievement</th>
+                                <th>Description</th>
+                                <th>Progress</th>
+                                <th>Rewards</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for achievement in achievements %}
+                            <tr>
+                                <td>{{ achievement.name }}</td>
+                                <td>{{ achievement.description }}</td>
+                                <td>
+                                    {% if achievement.is_achieved %}
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="{{ achievement.completed }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    {% else %}
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ achievement.percentage_completed }}%" aria-valuenow="{{ achievement.completed }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    {% endif %}
+
+                                    
+                                </td>
+                                <td>
+                                    {% if achievement.is_achieved %}
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input reward-checkbox" type="checkbox" id="{{achievement.reward}}">
+                                        <label class="form-check-label" for="{{achievement.reward}}">{{achievement.reward}}</label>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-check form-switch" id="blah">
+                                        <input class="form-check-input" type="checkbox" id="blah" disabled>
+                                        <label class="form-check-label" for="togglecss">Not Yet</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                    
+                </div>
+                
+                
+                    
+            </div>
+            <div class = "container achievements-item">
+                <h1>Streaks &#x1F525; &#x1F525;</h1>
+                <h2>Longest Streak :{{longest_streak}} &#x1F525;</h2>
+                <h2>Current Streak :{{current_streak}} &#x1F525;</h2>     
+            </div>
+            {% include 'partials/charts.html'%}
+        </div>     
+    </div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCreateReminder" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h1 id="offcanvasRightLabel">Create a Reminder</h1>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" id="createReminder">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasViewReminder" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h1 id="offcanvasRightLabel">View Your Reminders</h1>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" id="createReminder">
+        <div class="accordion" id="accordionExample">
+            {% for reminder in reminders %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="{{reminder.id}}{{reminder.value}}">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{reminder.id}}" aria-expanded="true" aria-controls="collapseOne">
+                        {{reminder.name}}
+                    </button>
+                    </h2>
+                    <div id="{{reminder.id}}" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Date Created : {{reminder.date_created}}</strong> Days to remind in : {{reminder.value}} 
+                        <button class="btn btn-primary" onclick="deleteReminder({{reminder.id}})">Delete</button>
+                    </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

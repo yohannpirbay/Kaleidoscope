@@ -1,0 +1,23 @@
+<div class="container achievements-item">
+    <h1>Stats</h1>
+    <div class="container graphs">
+        
+        <div class="chart">
+            <div>
+                <canvas id="linechart" width="400px" height="400px"></canvas>
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                var worddata ={{ word_count }} ;
+                var yeardata = {{ year_dates }} ;
+                var mooddata = {{ moods }};
+            </script>
+
+            <script src="/static/js/chart1.js"></script>
+        </div>
+        <div class="chart">
+            <div><canvas id="moodchart" width="400px" height="400px"></canvas></div>
+            <script src="/static/js/chart2.js"></script>
+        </div>
+    </div>
+</div>
